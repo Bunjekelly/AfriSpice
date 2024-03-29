@@ -1,0 +1,1 @@
+AfriSpice is a RESTful API built with Django meant for Africans to share Recipes of their traditional african dishes like Ndole, Eru, Okok, Semo, Ogbono etc.. This can permit other people any where in the world to follow the recipes and try to make african delicacies themselves.
