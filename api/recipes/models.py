@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 class Recipe(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
-    cooking_time = models.TextField()
+    cooking_time = models.TextField(default='30minutes')
     ingredients = models.ManyToManyField('Ingredient', related_name='recipes')
     procedure = models.TextField()
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
