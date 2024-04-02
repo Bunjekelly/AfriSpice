@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authtoken.models import Token
-from .serializers import CustomUserSerializer
+from .serializers import CustomUserSerializer, UserSerializer
 from .models import CustomUser
 
 class UserSignupView(APIView):
@@ -56,4 +56,4 @@ class UserProfileView(APIView):
 
 class UserListView(generics.ListAPIView):
     queryset = CustomUser.objects.all()
-    serializer_class = CustomUserSerializer
+    serializer_class = UserSerializer
