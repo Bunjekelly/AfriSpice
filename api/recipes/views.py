@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework import status
 from .models import Recipe, Ingredient
 from .serializers import RecipeSerializer, IngredientSerializer
 
@@ -89,3 +90,20 @@ class IngredientRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView)
     """
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
+
+class UserRecipesListView(generics.ListAPIView):
+    """
+    View to retrieve all recipes created by a specific user.
+
+    **GET** method:
+    - Requires:
+      - `id`: The ID of the user whose recipes to retrieve.
+    - Returns:
+      - A list of all recipes created by the specified user.
+    """
+
+    serializer_class = RecipeSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs['id']
+        return Recipe.objects.filter(created_by_id=user_id)

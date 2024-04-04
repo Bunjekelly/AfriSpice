@@ -7,6 +7,7 @@ from rest_framework.authtoken.models import Token
 from .serializers import CustomUserSerializer, UserSerializer
 from .models import CustomUser
 from django.contrib.auth import authenticate
+from rest_framework.exceptions import AuthenticationFailed
 
 class UserSignupView(APIView):
     """
@@ -23,12 +24,13 @@ class UserSignupView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        serializer = CustomUserSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            token, _ = Token.objects.create(user=user) 
-            return Response({'token': token.key}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+      serializer = CustomUserSerializer(data=request.data)
+      if serializer.is_valid():
+        user = serializer.save()
+        token, created = Token.objects.get_or_create(user=user) 
+
+        return Response({'token': token.key}, status=status.HTTP_201_CREATED)
+      return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserLoginView(APIView):
     """
@@ -50,10 +52,16 @@ class UserLoginView(APIView):
 
         user = authenticate(username=username, password=password)
         if user:
-            token, _ = Token.objects.get_or_create(user=user)
+            token_queryset = Token.objects.filter(user=user)
+            if token_queryset.exists():
+                token = token_queryset.first()
+            else:
+                token = Token.objects.create(user=user)
+
             return Response({'token': token.key}, status=status.HTTP_200_OK)
         else:
-            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+            raise AuthenticationFailed('Invalid credentials')
+
 
 
 class UserLogoutView(APIView):
@@ -106,3 +114,18 @@ class UserListView(generics.ListAPIView):
 
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+
+class UserDetailView(generics.RetrieveAPIView):
+    """
+    View to retrieve a specific user by their ID.
+
+    **GET** method:
+    - Requires:
+      - `id`: The ID of the user to retrieve.
+    - Returns:
+      - The data of the specified user.
+    """
+
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer
+    lookup_field = 'id'
