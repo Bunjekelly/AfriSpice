@@ -58,7 +58,7 @@ class UserLoginView(APIView):
             else:
                 token = Token.objects.create(user=user)
 
-            return Response({'token': token.key}, status=status.HTTP_200_OK)
+            return Response({'token': token.key, 'message': 'Successfully logged in'}, status=status.HTTP_200_OK)
         else:
             raise AuthenticationFailed('Invalid credentials')
 
