@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'api.recipes',
     'api.users',
     'rest_framework',
+    'rest_framework.authtoken',
     'rest_framework_swagger',
     'drf_yasg',
 ]
