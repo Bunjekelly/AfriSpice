@@ -1,25 +1,47 @@
 from rest_framework import generics
+from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 from .models import Recipe, Ingredient
 from .serializers import RecipeSerializer, IngredientSerializer
 
-class RecipeListCreateView(generics.ListCreateAPIView):
+class RecipeCreateAPIView(generics.CreateAPIView):
     """
-    View to list all recipes or create a new recipe.
-
-    - To list all recipes, send a GET request to this endpoint.
-    - To create a new recipe, send a POST request to this endpoint
-      with the required data.
+    Endpoint to create a new recipe.
 
     Required Permissions:
-    - None
+        - User must be authenticated.
+
+    HTTP Methods:
+        - POST: Create a new recipe.
+
+    Request Body:
+        - title (string): Title of the recipe.
+        - description (string): Description of the recipe.
+        - cooking_time (string): Cooking time required for the recipe.
+        - procedure (string): Procedure or steps to prepare the recipe.
+        - ingredients (list of integers): IDs of ingredients required for the recipe.
 
     Response:
-    - Returns a list of all recipes in the database or creates a new recipe
-      and returns the newly created recipe data.
+        - 201 Created: Returns the details of the created recipe.
 
-    Serializer:
-    - RecipeSerializer: Serializes Recipe model data.
+    """
+    permission_classes = [AllowAny]
+
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializer
+    
+class RecipeListAPIView(generics.ListAPIView):
+    """
+    Endpoint to list all recipes.
+
+    HTTP Methods:
+        - GET: Retrieve a list of all recipes.
+
+    Response:
+        - 200 OK: Returns a list of all recipes.
     """
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
