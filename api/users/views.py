@@ -8,6 +8,7 @@ from .serializers import CustomUserSerializer, UserSerializer
 from .models import CustomUser
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import NotFound
 
 class UserSignupView(APIView):
     """
@@ -129,3 +130,17 @@ class UserDetailView(generics.RetrieveAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     lookup_field = 'id'
+
+class UserDeleteView(APIView):
+    """
+    Allows authenticated users to delete their account.
+
+    **DELETE** method:
+    - Deletes the authenticated user account.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        user = request.user
+        user.delete()
+        return Response({'detail': 'User deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
