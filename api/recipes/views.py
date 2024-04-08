@@ -32,7 +32,7 @@ class RecipeCreateAPIView(generics.CreateAPIView):
     Response:
         - 201 Created: Returns the details of the created recipe.
     """
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     queryset = Recipe.objects.all()
     serializer_class = RecipeCreateSerializer
